@@ -38,7 +38,15 @@ func getGeoInfo(imagePath string) (float64, float64, error) {
 func getLocationDetails(lat, lon float64) (map[string]string, error) {
 	url := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=10", lat, lon)
 
-	resp, err := http.Get(url)
+	// Create a new request with the accept-language header set to "en" (English)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept-Language", "en")
+
+	// Perform the request
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
